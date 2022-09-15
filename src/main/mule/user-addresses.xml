@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="user-addressesFlow" doc:id="a43649fc-705a-4bec-be2c-54c52fb1af92" >
+		<ee:transform doc:name="Transform Message" doc:id="728bfd3f-f068-4d14-8c29-8d22e42ba90e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<batch:job jobName="user-addressesBatch_Job" doc:id="219fe4ef-0cad-4256-84f1-a1af4048adfc" maxFailedRecords="-1">
+			<batch:process-records >
+				<batch:step name="Batch_Step" doc:id="cb167e9a-a8c9-4b08-b6b6-c1be26cd5192" acceptExpression="payload.address_id != null">
+					<ee:transform doc:name="Transform Message" doc:id="c6331d26-0e9a-4028-8821-1d8f890617bb" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	"user_id" : payload.user_id,
+	"address_id" : payload.address_id,
+	"street" : payload.street,
+	"city" : payload.city,
+	"state" : payload.state,
+	"zipcode" : payload.zipcode,
+	"created" : payload.created
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="c7f1f4cd-ac2d-4243-9e33-08e80b530fb6" size="2">
+						<ee:transform doc:name="Transform Message" doc:id="0916f627-eecb-43e4-87ae-f24acefb4a24" >
+							<ee:message >
+								<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	zipcode: payload01.zipcode as String,
+	user_id: payload01.user_id as String,
+	city: payload01.city as String,
+	street: payload01.street as String,
+	created: payload01.created as String,
+	address_id: payload01.address_id as String,
+	state: payload01.state as String
+}]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
+						<db:bulk-insert doc:name="Bulk insert" doc:id="6ad1c34f-ac33-450f-89b8-2ade90068c3f" config-ref="Database_Config">
+							<db:sql ><![CDATA[INSERT INTO migration.user_address(user_id, address_id, street, city, state, zipcode, created) VALUES(:user_id, :address_id, :street, :city, :state, :zipcode, :created)]]></db:sql>
+						</db:bulk-insert>
+					</batch:aggregator>
+				</batch:step>
+			</batch:process-records>
+			<batch:on-complete>
+				<logger level="INFO" doc:name="Logger" doc:id="ed62e0ad-883b-4731-8396-8374c9d1f10c" message="#[payload]" />
+			</batch:on-complete>
+		</batch:job>
+	</flow>
+</mule>

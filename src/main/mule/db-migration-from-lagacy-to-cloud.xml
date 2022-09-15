@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="poll-the-server" doc:id="b6ec7d51-00e3-4bd4-8f11-ca32436cb20e" >
+		<sftp:listener doc:name="On New or Updated File" doc:id="db8de2db-b821-4882-be4f-aaeda1a208e8" config-ref="SFTP_Config" directory="/var/www/backup" watermarkEnabled="true">
+			<reconnect-forever />
+			<scheduling-strategy >
+				<fixed-frequency frequency="30" timeUnit="SECONDS"/>
+			</scheduling-strategy>
+		</sftp:listener>
+		<ee:transform doc:name="Transform Message" doc:id="2f3c811a-7ae5-4a7b-9c0f-55f9cf7abaef" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="13e0fc68-b4bf-4004-a1aa-51e993498d2b">
+			<route>
+				<flow-ref doc:name="Flow Reference" doc:id="9c713c1e-6651-4c0f-a457-e70f46df7c80" name="user-addressesFlow" />
+			</route>
+			<route>
+				<flow-ref doc:name="Flow Reference" doc:id="6c3d37ba-d101-414d-a3b7-4496fb07ed51" name="usersFlow" />
+			</route>
+		</scatter-gather>
+		<logger level="INFO" doc:name="Copy_of_Logger" doc:id="de4620b7-33b7-42bb-b660-455f58d87800" message="#[attributes.fileName]" />
+	</flow>
+</mule>
