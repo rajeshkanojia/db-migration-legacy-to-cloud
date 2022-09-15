@@ -1,0 +1,30 @@
+Client have a legacy system hosted on AWS EC2, application data is also stored on database hosted on the same EC2 instance and access through localhost(means we can't access the database from outside).
+
+Now client wants to move on cloud database(like RDS) so that in it can be accessible across the system, and also utilise the cloud automated services.
+
+
+Connector user:-
+	SFTP
+	Database
+	Secure Config
+	Batch Job
+	Scatter-Gatter
+
+
+At client legacy server we configure a cron job which will trigger a php script. This script scan the database for export_bit=0 and export all the records in a csv file at specific location("/var/www/backup"), at the end of script these export_bit is changed to 1 so that in next scan these exported records can be excluded.
+
+
+Now in mule application I am using SFTP "On New or Updated File" connector which poll the "/var/www/backup" location for csv file in every 30 seconds, if it find new file the flow get triggered.
+
+As we have 2 different tables (users and user_address), so we send the whole payload to users and user_address flow through scatter-gatter. 
+
+At users flow we are using "payload.first_name != null" in Accept Expression to filter out all the user_address records after that we simply add these records to the database through bulk insert.
+
+At users flow we are using "payload.payload.address_id != null" in Accept Expression to filter out all the users records after that we simply add these records to the database through bulk insert.
+
+
+
+
+
+
+
