@@ -1,0 +1,13 @@
+%dw 2.0
+
+type auto_d3958efa_8ac6_41fe_9909_3b303ab6b442_Input_Attributes = {|
+  timestamp: DateTime {"typeId": "java.time.LocalDateTime"}, 
+  size: Number, 
+  regularSize?: Boolean {"typeId": "boolean"}, 
+  directory?: Boolean {"typeId": "boolean"}, 
+  symbolicLink?: Boolean {"typeId": "boolean"}, 
+  path: String, 
+  fileName: String
+|} {"typeAlias": "SftpFileAttributes",
+"typeId": "org.mule.extension.sftp.api.SftpFileAttributes"}
+

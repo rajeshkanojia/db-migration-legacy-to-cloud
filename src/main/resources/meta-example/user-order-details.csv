@@ -1,0 +1,6 @@
+﻿user_id,order_id,item,price,quantity,total,order_date,export_bit,table
+LD27DSL,INFQ307JA,toilet cleaner,17.455885,23,401.4853516,2020-03-11,0,user_order_details
+LD27DSL,INFQ307JA,flour,12.340671,15,185.1100616,2020-03-11,0,user_order_details
+LD27DSL,INFQ307JA,pudding powder,28.998522,9,260.9866943,2020-03-11,0,user_order_details
+LD27DSL,INFQ307JA,whipped/sour cream,0.79977214,9,7.197949409,2020-03-11,0,user_order_details
+LD27DSL,INFQ307JA,frozen fish,27.899504,10,278.9950256,2020-03-11,0,user_order_details

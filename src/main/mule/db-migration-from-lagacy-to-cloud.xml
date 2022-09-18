@@ -7,10 +7,10 @@ http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sft
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 	<flow name="poll-the-server" doc:id="b6ec7d51-00e3-4bd4-8f11-ca32436cb20e" >
-		<sftp:listener doc:name="On New or Updated File" doc:id="db8de2db-b821-4882-be4f-aaeda1a208e8" config-ref="SFTP_Config" directory="/var/www/backup" watermarkEnabled="true">
+		<sftp:listener doc:name="On New or Updated File" doc:id="db8de2db-b821-4882-be4f-aaeda1a208e8" config-ref="SFTP_Config" directory="/var/www/backup" watermarkEnabled="true" autoDelete="true">
 			<reconnect-forever />
 			<scheduling-strategy >
-				<fixed-frequency frequency="30" timeUnit="SECONDS"/>
+				<fixed-frequency frequency="3" timeUnit="MINUTES"/>
 			</scheduling-strategy>
 		</sftp:listener>
 		<ee:transform doc:name="Transform Message" doc:id="2f3c811a-7ae5-4a7b-9c0f-55f9cf7abaef" >
@@ -18,17 +18,25 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-payload]]></ee:set-payload>
+payload + {'file' : attributes.fileName}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<scatter-gather doc:name="Scatter-Gather" doc:id="13e0fc68-b4bf-4004-a1aa-51e993498d2b">
-			<route>
-				<flow-ref doc:name="Flow Reference" doc:id="9c713c1e-6651-4c0f-a457-e70f46df7c80" name="user-addressesFlow" />
+		<scatter-gather doc:name="Scatter-Gather" doc:id="1eb58d2f-1375-4f53-8044-44c9198bf250" >
+			<route >
+				<flow-ref doc:name="Users" doc:id="6c3d37ba-d101-414d-a3b7-4496fb07ed51" name="usersFlow" />
 			</route>
-			<route>
-				<flow-ref doc:name="Flow Reference" doc:id="6c3d37ba-d101-414d-a3b7-4496fb07ed51" name="usersFlow" />
+			<route >
+				<flow-ref doc:name="User Address" doc:id="a0f39398-cca2-4b6c-91d2-23fa62e12481" name="user-addressesFlow"/>
+			</route>
+			<route >
+				<flow-ref doc:name="User Order" doc:id="013bf062-3813-4f7c-962b-c7b850dc2519" name="user-ordersFlow"/>
+			</route>
+			<route >
+				<flow-ref doc:name="User Order Details" doc:id="decab0df-da48-410a-b11f-6483730bf157" name="user-order-detailsFlow"/>
+			</route>
+			<route >
+				<flow-ref doc:name="Payment Status" doc:id="0c295db5-0538-4c40-b06c-7bc817bfe0ea" name="payment-statusFlow"/>
 			</route>
 		</scatter-gather>
-		<logger level="INFO" doc:name="Copy_of_Logger" doc:id="de4620b7-33b7-42bb-b660-455f58d87800" message="#[attributes.fileName]" />
 	</flow>
 </mule>

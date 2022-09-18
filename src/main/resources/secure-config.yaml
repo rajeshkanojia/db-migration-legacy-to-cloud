@@ -1,2 +1,10 @@
-rds:
 sftp:
+  host: "![WB6obswcRX36r6WniNuLcA==]"
+  port: "![NVrhUVLACLI=]"
+  user: "![oUlikPsbacUfjYKV8/dkFw==]"
+  
+db:
+  host: "![8fibUWFTGjehKNNoJi/ctH6qT6uMCLnHwfy9+7e0MRIXr8myT+vuDyAFNUZyusqnXdqUXflo1ah979JYHQZyHQ==]"
+  port: "![GsCqbJEvqpI=]"
+  username: "![VhuS5q82Fbc=]"
+  password: "![E+4GOhmC6VMCAKOngUE9OQ==]"

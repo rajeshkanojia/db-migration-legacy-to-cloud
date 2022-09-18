@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_9d8b6435_063e_464f_9351_51fff8041006_Input_Payload <T>= Array<T | {| file: String |}>
+

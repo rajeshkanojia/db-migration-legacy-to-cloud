@@ -1,6 +1,6 @@
 %dw 2.0
 
-type auto_a43649fc_705a_4bec_be2c_54c52fb1af92_Output_Attributes = {|
+type auto_9d8b6435_063e_464f_9351_51fff8041006_Input_Attributes = {|
   timestamp: DateTime {"typeId": "java.time.LocalDateTime"}, 
   size: Number, 
   regularSize?: Boolean {"typeId": "boolean"}, 

@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:db="http://www.mulesoft.org/schema/mule/db"
-	xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
 	<sftp:config name="SFTP_Config" doc:name="SFTP Config" doc:id="5de0c3a2-3d88-4dd2-bf6b-b247a3d9b865" >
-		<sftp:connection host="15.206.222.152" username="ec2-user" identityFile="jenkins.pem" />
+		<sftp:connection host="${secure::sftp.host}" username="${secure::sftp.user}" identityFile="jenkins.pem" port="${secure::sftp.port}"/>
 	</sftp:config>
 	<configuration doc:name="Configuration" doc:id="0d07a48f-a06d-4e36-88c0-e8be8df55695" defaultErrorHandler-ref="globalError_Handler" />
 	<db:config name="Database_Config" doc:name="Database Config" doc:id="236e7d04-a516-4b21-b0c4-d8a19d4bcee4" >
-		<db:my-sql-connection host="mulesoft-migration.corkvbuocrc7.ap-south-1.rds.amazonaws.com" port="3306" user="admin" password="Mulesoft" />
+		<db:my-sql-connection host="${secure::db.host}" port="${secure::db.port}" user="${secure::db.username}" password="${secure::db.password}" />
 	</db:config>
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="5fe62e8e-7bee-4c15-8de3-eb76cbe8ec91" file="secure-config.yaml" key="mulesoft" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
 	<error-handler name="globalError_Handler" doc:id="a0291e65-518b-4919-b3be-14bf3f2fce0c" >
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="4923f930-9c9e-480e-94a6-b6f1c77a1188" type="ANY">
-			<logger level="INFO" doc:name="Logger" doc:id="6c4bd7ee-a486-4d40-8168-af31a0594377" message='#[error]' />
+			<logger level="INFO" doc:name="Logger" doc:id="6c4bd7ee-a486-4d40-8168-af31a0594377" message="#[error]" />
 		</on-error-propagate>
 	</error-handler>
 </mule>

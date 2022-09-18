@@ -1,0 +1,7 @@
+﻿id,user_id,order_id,status,amount,payment_mode,export_bit,table
+1,DD95FRZ,ABCZ399WC,success,2526.12,online,0,payment_status
+2,LD27DSL,ACIS543IU,pending,8329.17,cash,0,payment_status
+3,IE16VEH,ADCJ381OM,failed,6209.75,cash,0,payment_status
+4,DD95FRZ,AEOY954ZD,pending,6021.69,online,0,payment_status
+5,OC20FIC,AETN664GD,failed,6720.69,online,0,payment_status
+6,SN95ZWI,AGML768AZ,success,4722.75,cash,0,payment_status
